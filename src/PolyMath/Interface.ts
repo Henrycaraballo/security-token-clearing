@@ -16,7 +16,7 @@ import {
   ScopedCommitment,
   SecurityToken,
   Tagged,
-  Transcript,
+  Transcript
 } from "../Types";
 import * as PMT from "./Types";
 
@@ -24,7 +24,7 @@ export async function putInvestor(
   investor: PMT.Investor,
   primaryWallet: string,
   tokenAddr: string,
-  cWeb3: ConfiguredWeb3,
+  cWeb3: ConfiguredWeb3
 ): Promise<Transcript> {
   const { controller, web3 } = cWeb3;
 
@@ -33,7 +33,7 @@ export async function putInvestor(
     transcript.push({
       description,
       gas: r.gasUsed,
-      hash: r.transactionHash,
+      hash: r.transactionHash
     });
   };
   const receipt = (hash: string) => txReceipt(hash, web3);
@@ -41,12 +41,19 @@ export async function putInvestor(
   const securityToken: any = new PM.SecurityToken(tokenAddr);
   const transferManager: any = await securityToken.getTransferManager();
 
-  const whitelistedInvestor = await getInvestorFromWhitelist(transferManager, investor.address);
+  const whitelistedInvestor = await getInvestorFromWhitelist(
+    transferManager,
+    investor.address
+  );
   const pmInvestor = buildInvestor(investor, whitelistedInvestor);
 
-  if (pmInvestor != null) {
-    const newInvestorTransaction: any = await transferManager.modifyWhitelist(pmInvestor);
-    const investorReceipt = await receipt(newInvestorTransaction.transactionHash);
+  if (pmInvestor !== null) {
+    const newInvestorTransaction: any = await transferManager.modifyWhitelist(
+      pmInvestor
+    );
+    const investorReceipt = await receipt(
+      newInvestorTransaction.transactionHash
+    );
     appendToTranscript("registers investor", investorReceipt);
   }
 
